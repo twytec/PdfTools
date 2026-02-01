@@ -1,0 +1,61 @@
+﻿@page "/{text?}"
+
+<div style="height: 100dvh; overflow: hidden; padding: 2px;">
+    <MudStack Style="height: 40px;" Row="true" StretchItems="StretchItems.Middle">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Variant="Variant.Filled" Color="Color.Primary" OnClick="_ => _open = true" />
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.Center">
+            <MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Secondary" OnClick="_ => _ps.Scale -= 0.05" />
+            <MudMenu Label="@_ps.GetScaleAsyString()">
+                <MudMenuItem Label="25 %" OnClick="_ => _ps.Scale = 0.25" />
+                <MudMenuItem Label="50 %" OnClick="_ => _ps.Scale = 0.5" />
+                <MudMenuItem Label="75 %" OnClick="_ => _ps.Scale = 0.75" />
+                <MudMenuItem Label="100 %" OnClick="_ => _ps.Scale = 1" />
+            </MudMenu>
+            <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Secondary" OnClick="_ => _ps.Scale += 0.05" />
+        </MudStack>
+        <MudIconButton Icon="@Icons.Material.Filled.GridView" Variant="Variant.Filled" Color="Color.Primary" OnClick="ToggleGrid" />
+    </MudStack>
+
+    <div style="width: 100%; margin: 8px 0px 8px 0px; height: calc(100dvh - 40px - 4px - 16px); overflow-y: auto;">
+        @if (_ps.Pages.Count == 0)
+        {
+            <MudStack Spacing="1" AlignItems="AlignItems.Center">
+                <MudText Typo="Typo.h1" Style="font-size: 2rem;">PDF Tool 24</MudText>
+                <MudText Align="Align.Center">@_ts.I18n.TitleSub1</MudText>
+                <MudText Align="Align.Center">@_ts.I18n.TitleSub2</MudText>
+                <MudText Align="Align.Center">@_ts.I18n.TitleSub3</MudText>
+                @* <MudText Align="Align.Center">@_ts.I18n.TitleSub4</MudText> *@
+            </MudStack>
+        }
+        else
+        {
+            <MudStack Row="_row" Wrap="_wrap" Justify="_justify" AlignItems="_alignItems">
+                @foreach (var item in _ps.Pages)
+                {
+                    <PdfTools.Shared.PdfPage @key="@item.GetKey()" ViewModel="item" />
+                }
+            </MudStack>
+        }
+    </div>
+
+    @* <div style="height: 80px;">
+        <p>https://adsense.google.com/intl/de_de/start/</p>
+    </div> *@
+</div>
+
+<MudFileUpload T="IBrowserFile" @ref="_fileUpload" Accept="application/pdf" FilesChanged="LoadPdfAsync" Hidden="true" tabindex="-1" />
+
+<MudDrawer @bind-Open="@_open" Anchor="Anchor.Start" Elevation="1" Variant="@DrawerVariant.Temporary" OverlayAutoClose="true">
+    <MudNavMenu>
+        <MudNavLink role="button" Icon="@Icons.Material.Filled.Menu" OnClick="_ => _open = false">@_ts.I18n.CloseMenu</MudNavLink>
+        <MudNavLink role="button" Icon="@Icons.Custom.FileFormats.FilePdf" OnClick="OpenFilePicker">@_ts.I18n.OpenPdf</MudNavLink>
+        <MudNavLink role="button" Icon="@Icons.Custom.FileFormats.FilePdf" OnClick="_ps.SavePdfAsync">@_ts.I18n.SavePdf</MudNavLink>
+        <MudDivider />
+        <MudText Class="ml-2 mt-2">@_ts.I18n.SelectedElements</MudText>
+        <MudNavLink role="button" Icon="@Icons.Material.Filled.SelectAll" OnClick="_ps.SelectAll">@_ts.I18n.SelectAll</MudNavLink>
+        <MudNavLink role="button" Icon="@Icons.Material.Filled.Deselect" OnClick="_ps.DeselectAll">@_ts.I18n.DeselectAll</MudNavLink>
+        <MudNavLink role="button" Icon="@Icons.Custom.FileFormats.FilePdf" OnClick="_ps.SaveSelected">@_ts.I18n.SavePdf</MudNavLink>
+        <MudNavLink role="button" Icon="@Icons.Material.Filled.Delete" OnClick="_ps.DeleteSelect">@_ts.I18n.Delete</MudNavLink>
+        <MudDivider />
+    </MudNavMenu>
+</MudDrawer>

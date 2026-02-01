@@ -1,0 +1,32 @@
+{
+  "LanguageCode": "en",
+
+  "CloseMenu": "Close menu",
+  "Color": "Color",
+
+  "Delete": "Delete",
+  "DeselectAll": "Deselect all",
+
+  "EnterNameToSaveSignature": "Enter name to save signature",
+  "Error": "Error",
+
+  "LoadFromFile": "Load from file",
+
+  "MovePage": "Move page",
+
+  "Name": "Name",
+
+  "Ok": "Okay",
+  "OpenPdf": "Open PDF",
+  "OpenMenu": "Open menu",
+
+  "Save": "Save",
+  "SavePdf": "Save PDF",
+  "SelectAll": "Select all",
+  "SelectedElements": "Selected elements",
+  "Signature": "Signature",
+  "TitleSub1": "Free and user-friendly PDF tools.",
+  "TitleSub2": "No registration or email required.",
+  "TitleSub3": "100% secure because the files never leave the device.",
+  "TitleSub4": "PDF Tool 24 can be used completely offline."
+}

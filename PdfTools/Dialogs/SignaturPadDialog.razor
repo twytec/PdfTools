@@ -1,0 +1,44 @@
+﻿@inject Data.TranslationService _ts
+@inject IJSRuntime _js
+
+<MudDialog>
+    <DialogContent>
+        <MudStack>
+            <MudTextField Label="@_ts.I18n.Name" HelperText="@_ts.I18n.EnterNameToSaveSignature" @bind-Value="_name" />
+            <MudFileUpload T="IBrowserFile" Accept=".png" FilesChanged="UploadFiles">
+                <ActivatorContent>
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.CloudUpload" FullWidth="true">
+                        @_ts.I18n.LoadFromFile
+                    </MudButton>
+                </ActivatorContent>
+            </MudFileUpload>
+
+            @if (_signaturs.Count > 0)
+            {
+                <div style="display: grid; grid-template-columns: 40px 1fr 40px; grid-auto-rows: 40px;">
+                    @for (int i = 0; i < _signaturs.Count; i++)
+                    {
+                        var item = _signaturs[i];
+                        <MudIconButton OnClick="_ => DownloadSignature(i)" Icon="@Icons.Material.Filled.CloudDownload" aria-label="@_ts.I18n.Save" Variant="Variant.Outlined" Color="Color.Primary" />
+                        <MudButton OnClick="_ => ListSelected(i)" Variant="Variant.Filled" Color="Color.Primary">@item.Name</MudButton>
+                        <MudIconButton OnClick="_ => DeleteSignature(i)" Icon="@Icons.Material.Filled.Delete" aria-label="@_ts.I18n.Delete" Variant="Variant.Outlined" Color="Color.Warning" />
+                    }
+                </div>
+            }
+
+            <MudDivider />
+            
+            <MudStack Row="true">
+                <MudColorPicker Label="@_ts.I18n.Color" ValueChanged="ColorSelected" Text="#000000" ShowAlpha="false" />
+                <MudIconButton OnClick="Clear" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Warning" aria-label="@_ts.I18n.Delete" />
+            </MudStack>
+            
+            <canvas style="border: 1px solid var(--mud-palette-primary); margin: 0px auto 0px auto;" id="@CanvasId"></canvas>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetPngFromCanvas">@_ts.I18n.Ok</MudButton>
+    </DialogActions>
+</MudDialog>

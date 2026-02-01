@@ -1,0 +1,32 @@
+﻿{
+  "LanguageCode": "de",
+
+  "CloseMenu": "Menü schließen",
+  "Color": "Farbe",
+
+  "Delete": "Löschen",
+  "DeselectAll": "Alle abwählen",
+
+  "EnterNameToSaveSignature": "Name zum Speichern der Unterschrift eingeben",
+  "Error": "Fehler",
+
+  "LoadFromFile": "Aus Datei laden",
+
+  "MovePage": "Seite verschieben",
+
+  "Name": "Name",
+
+  "Ok": "Okay",
+  "OpenPdf": "PDF öffnen",
+  "OpenMenu": "Menü öffnen",
+
+  "Save": "Speichern",
+  "SavePdf": "PDF speichern",
+  "SelectAll": "Alle auswählen",
+  "SelectedElements": "Ausgewählte Elemente",
+  "Signature": "Unterschrift",
+  "TitleSub1": "Kostenlose und benutzerfreundliche PDF-Tools.",
+  "TitleSub2": "Keine Registrierung oder E-Mail erforderlich.",
+  "TitleSub3": "100 % DSGVO konform, da die Dateien das Gerät nie verlassen.",
+  "TitleSub4": "PDF Tool 24 kann vollständig offline verwendet werden."
+}

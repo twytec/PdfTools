@@ -1,0 +1,47 @@
+﻿@inject Data.PdfService _ps
+@inject Data.TranslationService _ts
+
+<MudDialog>
+    <DialogContent>
+        <MudNumericField @bind-Value="_index" Min="1" Max="@_ps.Pages.Count" @onkeyup="Enter" />
+        <MudButton Class="mt-3" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" OnClick="OkClick">@_ts.I18n.Ok</MudButton>
+    </DialogContent>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
+
+    [Parameter]
+    public ViewModels.PdfPageViewModel? ViewModel { get; set; }
+
+    private int _index = 0;
+
+    protected override void OnParametersSet()
+    {
+        if (ViewModel is not null)
+        {
+            _index = _ps.Pages.IndexOf(ViewModel) + 1;
+        }
+    }
+
+    private void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            OkClick();
+        }
+    }
+
+    private void OkClick()
+    {
+        if (ViewModel is not null)
+        {
+            _index--;
+            _ps.MovePageTo(ViewModel, _index);
+        }
+
+        MudDialog?.Close();
+    }
+}

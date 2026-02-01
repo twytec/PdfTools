@@ -1,0 +1,56 @@
+﻿@inject Data.PdfService _ps
+@inject Data.TranslationService _ts
+
+@if (ViewModel is not null)
+{
+    <MudPaper @onmousemove="ViewModel.OnMouseMove" @onmouseup="ViewModel.OnMouseUp" Elevation="8" Style="@ViewModel.WrapperStyle">
+        <MudStack Style="height: 40px;" Justify="Justify.SpaceBetween" Row="true">
+            <MudCheckBox @bind-Value="ViewModel.IsSecected" />
+            <MudMenu AriaLabel="@_ts.I18n.OpenMenu" Icon="@Icons.Material.Filled.Menu" 
+                Color="Color.Primary">
+                <MudMenuItem Label="@_ts.I18n.Signature" OnClick="ViewModel.AddSignature" />
+                <MudMenuItem Label="@_ts.I18n.MovePage" OnClick="ViewModel.MovePageTo" />
+            </MudMenu>
+            <MudIconButton OnClick="Delete" Icon="@Icons.Material.Filled.Delete" aria-label="@_ts.I18n.DeselectAll" Color="Color.Warning" />
+        </MudStack>
+        <div style="@ViewModel.ScaleStyle">
+            <canvas name="pdfpage" id="@ViewModel.GetCanvasId()">
+            </canvas>
+
+            @if (ViewModel.Signatures.Count > 0)
+            {
+                foreach (var item in ViewModel.Signatures)
+                {
+                    <MudPaper draggable="false" Style="@ViewModel.GetSignStyle(item)">
+                        <MudStack Row="true" Style="height: 40px;">
+                            <MudIconButton OnClick="_ => ViewModel.ScaleSign(0.025F, item)" Icon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Color="Color.Secondary" />
+                            <MudIconButton OnClick="_ => ViewModel.ScaleSign(-0.025F, item)" Icon="@Icons.Material.Filled.Remove" Variant="Variant.Outlined" Color="Color.Secondary" />
+                            <MudSpacer />
+                            <MudIconButton OnClick="_ => ViewModel.Signatures.Remove(item)" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Outlined" Color="Color.Secondary" />
+                        </MudStack>
+                        <MudImage @onmousedown="((a) => ViewModel.OnMouseDown(a, item))" draggable="false" Src="@item.GetSrc()" Style="width: 100%;" />
+                    </MudPaper>
+                }
+            }
+        </div>
+    </MudPaper>
+}
+
+@code {
+
+    [Parameter]
+    public ViewModels.PdfPageViewModel? ViewModel { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && ViewModel is not null)
+        {
+            await ViewModel.RenderPageAsync(StateHasChanged);
+        }
+    }
+
+    private async Task Delete()
+    {
+        await _ps.DeleteAsync(ViewModel);
+    }
+}

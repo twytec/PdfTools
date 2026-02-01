@@ -1,0 +1,27 @@
+﻿@inherits LayoutComponentBase
+@inject Data.BusyService _bs
+
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider BackdropClick="false" CloseButton="true" CloseOnEscapeKey="false" FullWidth="true" MaxWidth="MaxWidth.Small" Position="DialogPosition.TopCenter" />
+
+@Body
+
+@if (_bs.IsShow == true)
+{
+    <MudOverlay Visible="true" DarkBackground="true" AutoClose="false">
+        <MudProgressCircular Color="Color.Secondary" Style="width: 80px; height: 80px;" Indeterminate="true" />
+    </MudOverlay>
+}
+
+@code {
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _bs.Init(StateHasChanged);
+        }
+    }
+
+}
