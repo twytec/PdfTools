@@ -1,0 +1,153 @@
+﻿@inject IJSRuntime _js
+@inject Data.TranslationService _ts
+
+@if (Signatur is not null && ViewModel is not null)
+{
+    <MudDialog>
+        <DialogContent>
+            <div style="width: 100%; overflow: hidden;">
+                <div id="@_id" @onpointermove="OnMove" @onpointerup="OnEnd"
+                     class="mud-elevation-8" style="margin-left: auto; margin-right: auto; position: relative; overflow: hidden; width: @(ViewModel.Width)px; height: @(ViewModel.Height)px;">
+                    <MudPaper draggable="false" Style="@GetSignStyle()">
+                        <MudImage @onpointerdown="OnStart" draggable="false" Src="@Signatur.GetSrc()" Style="width: 100%;" />
+                    </MudPaper>
+                </div>
+            </div>
+        </DialogContent>
+        <DialogActions>
+            <MudIconButton OnClick="_ => ScaleSign(0.025F)" Icon="@Icons.Material.Filled.Add" Variant="Variant.Outlined" Color="Color.Secondary" />
+            <MudIconButton OnClick="_ => ScaleSign(-0.025F)" Icon="@Icons.Material.Filled.Remove" Variant="Variant.Outlined" Color="Color.Secondary" />
+            <MudIconButton OnClick="Remove" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Outlined" Color="Color.Secondary" />
+            <MudSpacer />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Close">@_ts.I18n.Ok</MudButton>
+        </DialogActions>
+    </MudDialog>
+}
+
+
+@code {
+
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
+
+    [Parameter]
+    public Data.PdfSignature? Signatur { get; set; }
+
+    [Parameter]
+    public ViewModels.PdfPageViewModel? ViewModel { get; set; }
+
+    private IJSObjectReference? module;
+
+    private readonly string _id = "pageToMove";
+    private int _width;
+    private int _height;
+
+    bool drag = false;
+    double startX = 0;
+    double startY = 0;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && ViewModel is not null)
+        {
+            module = await _js.InvokeAsync<IJSObjectReference>("import", "./Dialogs/MoveSignatureDialog.razor.js");
+            var s = await module.InvokeAsync<System.Drawing.Size>("moveSignatureInit", ViewModel.GetCanvasId(), _id, ViewModel.Width, ViewModel.Height);
+            _width = s.Width;
+            _height = s.Height;
+
+            StateHasChanged();
+        }
+    }
+
+    private string GetSignStyle()
+    {
+        if (Signatur is not null && _width > 0)
+        {
+            var w = Math.Ceiling(_width * Signatur.Width);
+            var h = Math.Ceiling(_height * Signatur.Height);
+            var x = Math.Ceiling(_width * Signatur.X);
+            var y = Math.Ceiling(_height * Signatur.Y);
+
+            return $"border: 1px solid var(--mud-palette-secondary); position: absolute; background-color: transparent; width: {w}px; height: {h}px; left: {x}px; top: {y}px;";
+        }
+
+        return string.Empty;
+    }
+
+    private async Task Close()
+    {
+        if (module is not null)
+        {
+            try
+            {
+                await module.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+            }
+        }
+
+        MudDialog?.Close();
+    }
+
+    private void Remove()
+    {
+        if (Signatur is not null && ViewModel is not null)
+        {
+            ViewModel.Signatures.Remove(Signatur);
+            MudDialog?.Close();
+        }
+    }
+
+    private void ScaleSign(float val)
+    {
+        if (Signatur is not null)
+        {
+            val = Signatur.Width + val;
+            var f = val / Signatur.Width;
+            var w = Signatur.Width * f;
+            var h = Signatur.Height * f;
+            Signatur.Width = w;
+            Signatur.Height = h;
+        }
+    }
+
+    private void OnStart(PointerEventArgs args)
+    {
+        if (args.Button == 0)
+        {
+            drag = true;
+            startX = args.ClientX;
+            startY = args.ClientY;
+        }
+    }
+
+    private void OnMove(PointerEventArgs args)
+    {
+        if (drag == true && Signatur is not null && ViewModel is not null)
+        {
+            Signatur.X += (float)((args.ClientX - startX) / _width);
+            Signatur.Y += (float)((args.ClientY - startY) / _height);
+
+            if (Signatur.X < 0)
+                Signatur.X = 0;
+
+            if (Signatur.Y < 0)
+                Signatur.Y = 0;
+
+            if (Signatur.X + Signatur.Width > 1)
+                Signatur.X = 1.0F - Signatur.Width;
+
+            if (Signatur.Y + Signatur.Height > 1)
+                Signatur.Y = 1.0F - Signatur.Height;
+
+            startX = args.ClientX;
+            startY = args.ClientY;
+        }
+    }
+
+    private void OnEnd()
+    {
+        drag = false;
+    }
+}

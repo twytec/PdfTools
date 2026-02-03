@@ -5,7 +5,7 @@ using PdfTools.ViewModels;
 
 namespace PdfTools.Data
 {
-    public sealed class PdfService(TranslationService _ts, IJSRuntime _js, PdfWorkerClient _pwc, BusyService _bs, IDialogService _dlg)
+    public sealed class PdfService(TranslationService _ts, MyJsInterop _myJs, IJSRuntime _js, PdfWorkerClient _pwc, BusyService _bs, IDialogService _dlg)
     {
         public event EventHandler? ScaleChanged;
         public double Scale
@@ -17,15 +17,13 @@ namespace PdfTools.Data
 
         public event EventHandler? Changed;
         public List<PdfPageViewModel> Pages { get; set; } = [];
-        public int WindowWidth { get; set; }
-        
-        private IJSObjectReference _ps = default!;
+        public System.Drawing.Size WindowSize { get; set; }
+
         private readonly Dictionary<int, byte[]> _pdfDatas = [];
 
         public async Task InitAsny()
         {
             await _pwc.InitAsync();
-            _ps = await _js.InvokeConstructorAsync("PdfService");
         }
 
         public async Task LoadPdfAsync(IBrowserFile file)
@@ -39,7 +37,7 @@ namespace PdfTools.Data
 
                 var bytes = ms.ToArray();
 
-                var doc = await _js.InvokeConstructorAsync("PdfService");
+                var doc = await _js.InvokeConstructorAsync("PdfDoc");
                 var count = await doc.InvokeAsync<int>("loadPdf", bytes);
 
                 if (count > 0)
@@ -50,7 +48,7 @@ namespace PdfTools.Data
                     }
                     _pdfDatas[_pdfDatas.Count] = bytes;
 
-                    WindowWidth = await _ps.InvokeAsync<int>("getWindowWidth");
+                    WindowSize = await _myJs.GetWindowSizeAsync();
                 }
             }
             catch (Exception ex)
@@ -79,7 +77,7 @@ namespace PdfTools.Data
                 var res = await _pwc.JobToWorkerAsync(jobData);
                 if (res is not null && res.Length > 0)
                 {
-                    await _js.InvokeVoidAsync("saveAsFile", "Pdf.pdf", res);
+                    await _myJs.SaveFileAsync("Pdf.pdf", res);
                 }
             }
             catch (Exception ex)
@@ -131,7 +129,7 @@ namespace PdfTools.Data
 
         public async Task DeleteSelect()
         {
-            foreach (var item in Pages)
+            foreach (var item in Pages.ToList())
             {
                 if (item.IsSecected)
                 {

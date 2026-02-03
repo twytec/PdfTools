@@ -29,13 +29,30 @@
             }
 
             <MudDivider />
-            
+
             <MudStack Row="true">
-                <MudColorPicker Label="@_ts.I18n.Color" ValueChanged="ColorSelected" Text="#000000" ShowAlpha="false" />
+                <MudChipSet @bind-SelectedValue="_penColor">
+                    @foreach (var item in _pens)
+                    {
+                        <MudChip Style="@($"background-color: {@item}")" Value="@item"><span style="color: @item;">C</span></MudChip>
+                    }
+                </MudChipSet>
+                <MudSpacer />
                 <MudIconButton OnClick="Clear" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Warning" aria-label="@_ts.I18n.Delete" />
             </MudStack>
-            
-            <canvas style="border: 1px solid var(--mud-palette-primary); margin: 0px auto 0px auto;" id="@CanvasId"></canvas>
+
+            <div style="width: 400px; height: 200px; border: 1px solid var(--mud-palette-primary);" @onpointerdown="OnStart" @onpointermove="OnMove" @onpointerup="OnEnd">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="@signaturePadId" width="400" height="200" stroke="@_penColor" stroke-width="@_penWidth" stroke-linecap="round" fill="none">
+                    @foreach (var item in _paths)
+                    {
+                        <path d="@item" />
+                    }
+                    @if (_path is not null)
+                    {
+                        <path d="@_path" />
+                    }
+                </svg>
+            </div>
         </MudStack>
     </DialogContent>
     <DialogActions>

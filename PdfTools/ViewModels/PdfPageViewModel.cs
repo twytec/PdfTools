@@ -27,10 +27,6 @@ namespace PdfTools.ViewModels
         private static readonly CultureInfo _ci = new("en-US");
         private Action? _stateHasChanged;
 
-        private PdfSignature? _dragImage;
-        double startX = 0;
-        double startY = 0;
-
         public PdfPageViewModel() { }
 
         public PdfPageViewModel(int pdfId, int pageNumber, PdfService ps, IJSObjectReference doc, IDialogService dlg, BusyService bs, TranslationService ts)
@@ -65,9 +61,9 @@ namespace PdfTools.ViewModels
                 Width = m.Width;
                 Height = m.Height;
 
-                if (Width > _ps.WindowWidth)
+                if (Width > _ps.WindowSize.Width)
                 {
-                    double scale = Math.Round(_ps.WindowWidth / (double)Width, 1, MidpointRounding.ToZero);
+                    double scale = Math.Round(_ps.WindowSize.Width / (double)Width, 1, MidpointRounding.ToZero);
                     _ps.Scale = scale;
                 }
                 else
@@ -103,98 +99,50 @@ namespace PdfTools.ViewModels
 
         public async Task AddSignature()
         {
-            DialogParameters<Dialogs.SignaturPadDialog> para = new()
-            {
-                { x => x.Width, Width }
-            };
+            DialogParameters<Dialogs.SvgSignaturePadDialog> para = new() { { x => x.Width, Width } };
+            var dref = await _dlg.ShowAsync<Dialogs.SvgSignaturePadDialog>(_ts.I18n.Signature, para);
 
-            var dref = await _dlg.ShowAsync<Dialogs.SignaturPadDialog>(_ts.I18n.Signature, para);
             var res = await dref.Result;
             if (res is not null && res.Canceled == false && res.Data is string s)
             {
                 using var bitmap = SKBitmap.Decode(Convert.FromBase64String(s));
-
                 float f = Width * 0.33F / bitmap.Width;
 
                 //Image size is relative to the page size
-                Signatures.Add(new()
+                PdfSignature sign = new()
                 {
                     ImageData = s,
                     Width = (float)((bitmap.Width * f) / Width),
                     Height = (float)((bitmap.Height * f) / Height),
                     X = 0.5F,
                     Y = 0.5F
-                });
+                };
+                Signatures.Add(sign);
+                await MoveSignature(sign);
             }
+        }
+
+        public async Task MoveSignature(PdfSignature sign)
+        {
+            DialogParameters<Dialogs.MoveSignatureDialog> para = new()
+            {
+                { x => x.ViewModel, this },
+                { x => x.Signatur, sign }
+            };
+
+            DialogOptions opt = new() { MaxWidth = MaxWidth.Medium, NoHeader = true };
+            var dref = await _dlg.ShowAsync<Dialogs.MoveSignatureDialog>(null, para, opt);
+            await dref.Result;
         }
 
         public string GetSignStyle(PdfSignature item)
         {
             var w = Math.Ceiling(Width * item.Width);
-            var h = Math.Ceiling(Height * item.Height + 40);
+            var h = Math.Ceiling(Height * item.Height);
             var x = Math.Ceiling(Width * item.X);
             var y = Math.Ceiling(Height * item.Y);
 
             return $"border: 1px solid var(--mud-palette-secondary); position: absolute; background-color: transparent; width: {w}px; height: {h}px; left: {x}px; top: {y}px;";
-        }
-
-        public void ScaleSign(float val, PdfSignature item)
-        {
-            val = item.Width + val;
-            var f = val / item.Width;
-            var w = item.Width * f;
-            var h = item.Height * f;
-            item.Width = w;
-            item.Height = h;
-        }
-
-        public void OnMouseDown(MouseEventArgs args, PdfSignature img)
-        {
-            if (args.Button == 0)
-            {
-                _dragImage = img;
-                startX = args.ClientX;
-                startY = args.ClientY;
-            }
-        }
-
-        public void OnMouseMove(MouseEventArgs args)
-        {
-            if (_dragImage is not null)
-            {
-                _dragImage.X += (float)((args.ClientX - startX) / Width);
-                _dragImage.Y += (float)((args.ClientY - startY) / Height);
-
-                if (_dragImage.X < 0)
-                    _dragImage.X = 0;
-
-                if (_dragImage.Y < 0)
-                    _dragImage.Y = 0;
-
-                if (_dragImage.X + _dragImage.Width > 1)
-                    _dragImage.X = 1.0F - _dragImage.Width;
-
-                if (_dragImage.Y + _dragImage.Height > 1)
-                    _dragImage.Y = 1.0F - _dragImage.Height;
-
-                startX = args.ClientX;
-                startY = args.ClientY;
-            }
-        }
-
-        public void OnMouseUp()
-        {
-            _dragImage = null;
-        }
-
-        public void OnDragEnd(DragEventArgs args)
-        {
-            if (_dragImage is not null)
-            {
-                _dragImage.X += (float)((args.ClientX - startX) / Width);
-                _dragImage.Y += (float)((args.ClientY - startY) / Height);
-                _dragImage = null;
-            }
         }
 
         #endregion

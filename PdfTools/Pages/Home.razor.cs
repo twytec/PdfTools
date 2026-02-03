@@ -5,7 +5,7 @@ using PdfTools.Data;
 
 namespace PdfTools.Pages
 {
-    public partial class Home(TranslationService _ts, PdfService _ps, BusyService _bs)
+    public partial class Home(TranslationService _ts, MyJsInterop _myJs, PdfService _ps, BusyService _bs)
     {
         [Parameter]
         public string? Text { get; set; }
@@ -23,6 +23,8 @@ namespace PdfTools.Pages
             if (firstRender)
             {
                 _bs.ShowBusy();
+
+                await _myJs.InitAsync();
 
                 if (Text is null)
                     await _ts.InitializeAsync();

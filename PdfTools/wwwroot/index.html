@@ -17,13 +17,8 @@
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
 
     <script src="js/pdfjs/pdf.mjs" type="module"></script>
-    <script src="js/signatur_pad/signature_pad.umd.min.js" type="module"></script>
-
-    <script src="js/scale.js"></script>
-    <script src="js/saveFile.js"></script>
-
-    <script src="js/mySignaturPad.js"></script>
-    <script src="js/pdfService.js"></script>
+    <script src="js/myJsInterop.js"></script>
+    <script src="js/pdfDoc.js"></script>
     <script src="js/pdfWorkerClient.js"></script>
     <script type="importmap"></script>
 </head>
@@ -31,13 +26,15 @@
 <body>
     <div id="app">
         <div id="gapp">
-            <svg class="loading-progress">
-                <circle r="40%" cx="50%" cy="50%" />
-                <circle r="40%" cx="50%" cy="50%" />
-            </svg>
+            <div style="justify-self: center;" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="mud-progress-circular mud-primary-text mud-progress-medium mud-progress-indeterminate">
+                <svg class="mud-progress-circular-svg" viewBox="22.5 22.5 43 43">
+                    <circle class="mud-progress-circular-circle mud-progress-indeterminate" cx="44" cy="44" r="20" fill="none" stroke-width="3"></circle>
+                </svg>
+                <div class="mud-progress-circular-percentage mud-progress-circular-indeterminate-child"></div>
+            </div>
             <div id="gapp-text" style="justify-self: center;">
                 <h1>PDF Tool 24</h1>
-                <p>Free, ad-supported, and user-friendly PDF tools.</p>
+                <p>Free and user-friendly PDF tools.</p>
                 <p>No registration or email required.</p>
                 <p>100% secure because the files never leave the device.</p>
             </div>

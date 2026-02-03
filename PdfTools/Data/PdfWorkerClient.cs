@@ -3,7 +3,7 @@ using System.Text;
 
 namespace PdfTools.Data
 {
-    public class PdfWorkerClient(IJSRuntime _js)
+    public sealed class PdfWorkerClient(IJSRuntime _js) : IAsyncDisposable
     {
         private IJSObjectReference? _client;
 
@@ -19,6 +19,20 @@ namespace PdfTools.Data
                 return await _client.InvokeAsync<string>("jobToWorker", Helpers.Json.GetJson(data));
             }
             return null;
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (_client is not null)
+            {
+                try
+                {
+                    await _client.DisposeAsync();
+                }
+                catch (Exception)
+                {
+                }
+            }
         }
     }
 }

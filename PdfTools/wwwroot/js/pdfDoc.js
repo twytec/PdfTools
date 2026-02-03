@@ -1,4 +1,4 @@
-﻿window.PdfService = class {
+﻿window.PdfDoc = class {
     plib;
     pages = [];
 
@@ -38,31 +38,13 @@
         this.pages.push(page);
 
         const p = canvas.parentElement;
-        p.style.width = canvas.width + "px";
-        p.style.height = canvas.height + "px";
+        p.style.width = `${canvas.width}px`;
+        p.style.height = `${canvas.height}px`;
 
         return {
             Width: canvas.width,
             Height: canvas.height
         };
-    }
-
-    getWindowWidth() {
-        return window.innerWidth;
-    }
-
-    scalePages(name, scale) {
-        const items = document.getElementsByName(name);
-        for (var i = 0; i < items.length; i++) {
-            const canvas = items[i];
-            const p = canvas.parentElement;
-            p.style.transform = "scale(" + scale + ")"
-
-            const w = Math.floor(canvas.width * scale);
-            const h = Math.floor(canvas.height * scale) + 40;
-            p.parentElement.style.width = w + "px";
-            p.parentElement.style.height = h + "px";
-        }
     }
 
     getPdfPagesAsImages(pdfData, scale){
