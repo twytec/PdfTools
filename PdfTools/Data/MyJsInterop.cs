@@ -12,6 +12,11 @@ namespace PdfTools.Data
             _module ??= await _js.InvokeConstructorAsync("MyJsInterop");
         }
 
+        public async ValueTask SetHtmlLangAsync(string code)
+        {
+            await _module.InvokeVoidAsync("setHtmlLang", code);
+        }
+
         public ValueTask<Size> GetWindowSizeAsync()
         {
             return _module.InvokeAsync<Size>("getWindowSize");

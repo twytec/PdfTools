@@ -1,5 +1,9 @@
 ﻿window.MyJsInterop = class {
 
+    setHtmlLang(code) {
+        document.documentElement.lang = code;
+    }
+
     getWindowSize() {
         return {
             width: window.innerWidth,

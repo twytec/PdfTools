@@ -9,6 +9,7 @@ foreach ($file in $files) {
         $t = $t.Replace('TitleSub1', $i18n.TitleSub1)
         $t = $t.Replace('TitleSub2', $i18n.TitleSub2)
         $t = $t.Replace('TitleSub3', $i18n.TitleSub3)
+        $t = $t.Replace('TitleSub4', $i18n.TitleSub4)
         
 
         $p = [IO.Path]::Combine($PSScriptRoot, '.\wwwroot\' + $i18n.LanguageCode)

@@ -35,7 +35,7 @@ namespace PdfTools.Data
         public string OpenPdf { get; set; } = string.Empty;
         public string OpenMenu { get; set; } = string.Empty;
         //P
-
+        public string ProjectUrl { get; set; } = string.Empty;
         //Q
         //R
         //S
