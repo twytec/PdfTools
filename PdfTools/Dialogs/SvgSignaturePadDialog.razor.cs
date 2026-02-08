@@ -59,22 +59,21 @@ namespace PdfTools.Dialogs
 
         #region List
 
-        private async Task ListSelected(int index)
+        private async Task ListSelected(Data.Signatur sign)
         {
-            await Finish(_signaturs[index].DataAsBase64);
+            await Finish(sign.DataAsBase64);
         }
 
-        private async Task DownloadSignature(int index)
+        private async Task DownloadSignature(Data.Signatur sign)
         {
-            var sign = _signaturs[index];
             await _myJs.SaveFileAsync($"{sign.Name}", sign.DataAsBase64);
         }
 
-        private async Task DeleteSignature(int index)
+        private async Task DeleteSignature(Data.Signatur sign)
         {
             if (_module is not null)
             {
-                _signaturs.RemoveAt(index);
+                _signaturs.Remove(sign);
                 await _module.InvokeVoidAsync("setSignaturToStorage", Helpers.Json.GetJson(_signaturs));
             }
         }
