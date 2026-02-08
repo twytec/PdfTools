@@ -10,6 +10,8 @@
   "EnterNameToSaveSignature": "Name zum Speichern der Unterschrift eingeben",
   "Error": "Fehler",
 
+  "HelpVideos": "Hilfevideos",
+
   "LoadFromFile": "Aus Datei laden",
 
   "MovePage": "Seite verschieben",
@@ -27,6 +29,7 @@
   "SelectAll": "Alle auswählen",
   "SelectedElements": "Ausgewählte Elemente",
   "Signature": "Unterschrift",
+
   "TitleSub1": "Kostenlose und benutzerfreundliche PDF-Tools.",
   "TitleSub2": "Keine Registrierung oder E-Mail erforderlich.",
   "TitleSub3": "100 % DSGVO konform, da die Dateien das Gerät nie verlassen.",

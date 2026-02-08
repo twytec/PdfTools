@@ -21,6 +21,7 @@ namespace PdfTools.Data
         //F
         //G
         //H
+        public string HelpVideos { get; set; } = string.Empty;
         //I
         //J
         //K

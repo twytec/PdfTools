@@ -10,6 +10,8 @@
   "EnterNameToSaveSignature": "Enter name to save signature",
   "Error": "Error",
 
+  "HelpVideos": "Help videos",
+
   "LoadFromFile": "Load from file",
 
   "MovePage": "Move page",
@@ -27,6 +29,7 @@
   "SelectAll": "Select all",
   "SelectedElements": "Selected elements",
   "Signature": "Signature",
+
   "TitleSub1": "Free and user-friendly PDF tools.",
   "TitleSub2": "No registration or email required.",
   "TitleSub3": "100% secure because the files never leave the device.",

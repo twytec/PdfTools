@@ -17,12 +17,6 @@
         text-align: center;
     }
 
-.tool-grid {
-    display: grid;
-    grid-gap: 4px;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-}
-
 #blazor-error-ui {
     color-scheme: light only;
     background: lightyellow;
