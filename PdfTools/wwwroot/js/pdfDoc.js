@@ -11,16 +11,17 @@
         return this.plib.numPages;
     }
 
-    async renderPage(number, scale, id) {
+    async renderPage(number, scale, width, id) {
         if (window.devicePixelRatio !== 1) {
             scale = scale * window.devicePixelRatio;
         }
 
-        if (scale > 1.5)
-            scale = 1.5;
-
         const page = await this.plib.getPage(number);
         const pw = page.view[2];
+
+        if (width > 0) {
+            scale = width / pw;
+        }
 
         if (pw / window.innerWidth > 1.5) {
             scale = window.innerWidth * 1.5 / pw;

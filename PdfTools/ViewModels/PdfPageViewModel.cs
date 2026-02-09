@@ -57,7 +57,14 @@ namespace PdfTools.ViewModels
 
             try
             {
-                var m = await _doc.InvokeAsync<PdfPageViewModel>("renderPage", PageNumber, Scale, GetCanvasId());
+                int width = 0;
+                if (PdfId > 0 && _ps.Pages.Count > 0)
+                {
+                    var first = _ps.Pages.First();
+                    width = first.Width;
+                }
+
+                var m = await _doc.InvokeAsync<PdfPageViewModel>("renderPage", PageNumber, Scale, width, GetCanvasId());
                 Width = m.Width;
                 Height = m.Height;
 
